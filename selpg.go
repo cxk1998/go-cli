@@ -12,7 +12,7 @@ import (
 type selpgArgs struct {	
 	start_page int 
 	end_page int
-	in_filename string
+	dest string
 	page_len int 
 	page_type int 
 	args      []string
@@ -27,7 +27,7 @@ func main() {
 func initArgs(args *selpgArgs) {
 	flag.IntVar(&args.start_page, "s", 1, "Start page number")
 	flag.IntVar(&args.end_page, "e", 1, "End page number")
-	flag.StringVar(&args.in_filename, "d", "", "Set the output to in_filenameination pipe")
+	flag.StringVar(&args.dest, "d", "", "Set the output to destination pipe")
 	fword := flag.Bool("f", false, "Page with form feeds")
 	flag.IntVar(&args.page_len, "l", 72, "Page with lines number")
 	flag.Parse()
@@ -56,11 +56,11 @@ func handleInput(args selpgArgs) {
 			return
 		}
 	}
-	if args.in_filename != "" {
-		cmd = exec.Command("/usr/bin/lp", fmt.Sprintf("-d%s", args.in_filename))
+	if args.dest != "" {
+		cmd = exec.Command("/usr/bin/lp", fmt.Sprintf("-d%s", args.dest))
 		reader, writer, err := os.Pipe()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Couldn't open pipe to %s\n", args.in_filename)
+			fmt.Fprintf(os.Stderr, "Couldn't open pipe to %s\n", args.dest)
 		}
 		cmd.Stdin = reader
 		out = writer
